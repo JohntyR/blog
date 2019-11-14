@@ -1,11 +1,11 @@
 <%- include("partials/header"); -%>
-  <h1>Home page</h1>
-
-  <%  posts.forEach((post) => { %>
-    <h1><%=post.title%></h1>
-    <p>
-      <%=post.content.substring(0, 100) + " ..."%>
-      <a href="/posts/<%=post._id%>">Read More</a>
-    </p>
+  <%  posts.slice().reverse().forEach((post) => { %>
+    <div class="content-post">
+      <h1><%=post.title%></h1>
+      <p>
+        <%=post.content.substring(0, 100) + " ..."%>
+        <a href="/posts/<%=post._id%>">read more</a>
+      </p>
+    </div>
   <% }) %>
 <%- include("partials/footer"); -%>

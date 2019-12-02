@@ -1,4 +1,4 @@
-  //jshint esversion: 6
+//jshint esversion: 6
 
 require("dotenv").config();
 const express = require("express");
@@ -7,89 +7,93 @@ const ejs = require("ejs");
 const mongoose = require("mongoose");
 const request = require("request");
 
-
-// init express app and include modules
+// Init express app, serve static files and include ejs and bodyParser.
 const app = express();
 app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.static('public'));
 
-
-//----------------mongoose----------------------
+//-----------------------------DB setup--------------------------------------
 mongoose.connect("mongodb://localhost:27017/blog-v3DB", {
   useUnifiedTopology: true,
   useNewUrlParser: true
 });
-
 const postSchema = new mongoose.Schema({
   title: String,
   content: String
 });
-
 const Post = mongoose.model("Post", postSchema);
 
-//create test post if DB empty
-const testPost = new Post({
-  title: "Test post",
-  content: "Test post body content"
-});
-
+//Check if DB is empty, create a test post and save it if yes.
 Post.find({}, (err, results) => {
   if (results.length === 0) {
+    const testPost = new Post({
+      title: "Test post",
+      content: "Test post body content"
+    });
     testPost.save();
   }
 });
 
-// ------------------------routing----------------------
-app.get("/", (req, res)=> {
+// Routing - Home Page
+app.get("/", (req, res) => {
+  //find 5 most recent posts.
   Post.find({}, (err, results) => {
     res.render("home", {
       posts: results
     });
-  });
+  }).sort({_id: -1}).limit(5);
 });
 
+// Routing - About/Contact
 app.get("/about", (req, res) => {
   res.render("about");
 });
 
-app.get("/contact", (req, res) => {
-  res.render("contact");
-});
-
-// GET & POST for composing new post
+// Routing - Compose
 app.route("/compose")
   .get((req, res) => {
     res.render("compose");
   })
   .post((req, res) => {
+    // get post details from submission.
     const newPost = new Post({
       title: req.body.postTitle,
       content: req.body.postBody
     });
-    newPost.save((err)=>{
-      if(!err) {
+    newPost.save((err) => {
+      if (err) {
+        res.render("failure");
+      } else {
         res.redirect("/");
       }
     });
   });
 
-// dynamic post pages
-app.get("/posts/:postId", (req, res) =>{
+// Routing - Individual Post page
+app.get("/posts/:postId", (req, res) => {
   const requestedPostId = req.params.postId;
 
-  Post.findOne({_id: requestedPostId}, (err, post)=> {
-    res.render("post", {
-      title: post.title,
-      content: post.content
-    });
+  Post.findOne({_id: requestedPostId}, (err, post) => {
+    if (err) {
+      res.render("failure");
+    } else {
+      res.render("post", {
+        title: post.title,
+        content: post.content
+      });
+    }
   });
 });
-// GET & POST for signup to newsletter
+
+// Routing - Signup
 app.get("/signup", (req, res) => {
   res.render("signup");
 });
-//success and failure routes
+
+//Routing - Success & Failure - not possible to GET
 app.post("/success", (req, res) => {
   res.redirect("/");
 });
@@ -99,7 +103,7 @@ app.post("/failure", (req, res) => {
 
 //--------------------------Signup API CALL to MailChimp----------------------
 app.post("/signup", (req, res) => {
-  //get input data
+  //Get submission data.
   var data = {
     members: [{
       email_address: req.body.Email,
@@ -111,7 +115,7 @@ app.post("/signup", (req, res) => {
     }]
   };
 
-  //prepare data for API call
+  //Prepare data for API call.
   var jsonData = JSON.stringify(data);
   var url = `${process.env(MAILCHIMP_URL)}`;
   var options = {
@@ -123,7 +127,7 @@ app.post("/signup", (req, res) => {
     body: jsonData
   };
 
-  //make API Call and redirect to success or failure page.
+  //Make API Call and redirect to success or failure page.
   request(options, (error, response, body) => {
     if (error || response.statusCode !== 200) {
       res.render("failure");
@@ -133,7 +137,7 @@ app.post("/signup", (req, res) => {
   });
 });
 
-// set up ports
+// ----------------------Port and server setup-----------------------------
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;

@@ -33,3 +33,8 @@ $(document).ready(() => {
   $('li.active').removeClass('active');
   $('a[href="' + location.pathname + '"]').closest('li').addClass('active');
 });
+
+$(function() {
+    // Custom Easing
+    jQuery.scrollSpeed(100, 1800, 'easeOutCubic');
+});

@@ -50,18 +50,6 @@ footer {
   margin-left: 20px;
 }
 
-.nav_animations {
-  animation-name: fadeIn, slideInDown;
-  -webkit-animation-name: fadeIn, slideInDown;
-}
-
-@media (min-width: 992px) {
-  .nav_animations {
-    animation-name: fadeIn, slideInRight;
-    -webkit-animation-name: fadeIn, slideInRight;
-  }
-}
-
 .navbar-brand {
   display: flex;
 }
@@ -75,17 +63,4 @@ footer {
 .content-post {
   margin-top: 50px;
   text-align: right;
-}
-
-.dots {
-  text-align: center;
-  margin-right: 10px;
-}
-
-.dots span {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  display: inline-block;
-  background: linear-gradient(301deg, #222831, #393e46, #00adb5, #eeeeee);
 }

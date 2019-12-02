@@ -12,7 +12,11 @@ colour4: #eeeeee
 }
 
 body {
-  background-color: #eeeeee;
+  background-image: url("/img/bg.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  overscroll-behavior: contain;
 }
 
 h1 {
@@ -27,6 +31,10 @@ p {
 
 p a {
   color: #00adb5;
+}
+
+footer {
+  text-align: center;
 }
 
 .navbar {

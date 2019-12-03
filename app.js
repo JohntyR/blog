@@ -101,6 +101,19 @@ app.post("/failure", (req, res) => {
   res.redirect("/");
 });
 
+// Fetch an additional 5 posts
+app.get("/fetch/:postsToGet", (req, res)=> {
+  const postsToGet = Number(req.params.postsToGet);
+
+  Post.find({}, (err, results) => {
+    if(err){
+      res.send(JSON.stringify({res:"failure"}));
+    } else{
+      res.send(results);
+    }
+  }).sort({_id: -1}).skip(postsToGet).limit(5);
+});
+
 //--------------------------Signup API CALL to MailChimp----------------------
 app.post("/signup", (req, res) => {
   //Get submission data.

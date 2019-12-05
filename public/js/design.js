@@ -19,7 +19,7 @@ $(window).scroll(()=> {
           <div class='content-post'>
             <h1>${post.title}</h1>
             <p>
-              ${post.content}.substring(0, 200) + ' ...'
+              ${post.content.substring(0, 200)} ...
               <a href='/posts/${post._id}'>read more</a>
             </p>
           </div>
